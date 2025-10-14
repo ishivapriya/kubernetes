@@ -1,0 +1,104 @@
+Kubernetes:-
+
+Kubernetes is an open-source container orchestration platform that automates: Deployment, Scaling, Load balancing, Networking, Self-healing of containerized applications (like Docker containers).
+
+Before Kubernetes:
+
+- You had to manually start/stop containers on each machine.
+- Scaling meant manually running(vertical scaling) more containers.
+- If a container crashed, you had to restart it yourself.
+- Networking between containers was complex.
+- Load balancing across containers was manual.
+
+Architecture:-
+
+Control-plane node:- 
+- In Kubernetes, the control plane node (often referred to as the master node in older terminology) is the central management component of a Kubernetes cluster. It is responsible for maintaining the desired state of the cluster.
+
+It contains 5 components:- 
+
+Kube-apiserver: 
+- It is the core control plane component in Kubernetes that exposes the Kubernetes API. It acts as the entry point for all cluster operations — every command, request, or interaction with the cluster goes through it.
+
+- It processes all RESTful requests (like GET, POST, PUT, DELETE) from users, CLI (kubectl), or internal components.
+- Ensures the YAML/JSON payload (like Pod or Deployment spec) is syntactically and semantically valid according to Kubernetes API schema.
+- It interacts with etcd (the cluster’s key-value store) to store or retrieve cluster state (like Pod specs, ConfigMaps, Secrets, etc.).
+- Components like kube-scheduler, kube-controller-manager, and kubelet all communicate with the API Server to read or update data.
+
+Etcd:- 
+- A highly available and distributed key-value store that serves as Kubernetes' backing store for all cluster data. It stores the cluster's configuration data, state, and metadata.
+
+Examples of key-value pairs:
+
+Key					Value
+/registry/pods/default/nginx-pod	Full Pod YAML definition
+/registry/deployments/default/webapp	Deployment spec
+
+
+kube-scheduler: 
+- This component watches for newly created Pods with no assigned node and selects a node for them to run on, considering factors like resource requirements, policies, and affinity/anti-affinity specifications.
+
+kube-controller-manager: 
+- This runs various controller processes that regulate the state of the cluster. It monitors the current state of cluster objects (Pods, ReplicaSets, Deployments, Nodes, etc.) and makes changes to move the cluster towards the desired state.
+For example, the Node Controller ensures that nodes are healthy, the Replication Controller maintains the desired number of Pod replicas, and so on.
+
+ReplicationController:- Ensures specified number of Pod replicas are running. (Older, replaced by ReplicaSet).
+Deployment Controller:- Manages ReplicaSets and rolling updates for apps.
+
+cloud-controller-manager (optional): 
+- This component integrates Kubernetes with the underlying cloud provider's API (if the cluster is running in a cloud environment). It handles cloud-specific control logic, such as provisioning load balancers or managing cloud storage volumes.
+
+Worker Node:-
+
+It contains 3 components:-
+
+Kubelet: 
+- kubelet is an agent that runs on every worker node (and control plane node too sometimes). It ensures that containers are running in Pods as instructed by the control plane. If a Pod crashes, kubelet restarts it. It also communicates with control plane node.
+
+Kube-proxy:
+- kube-proxy is a networking component that runs on every node. It maintains network rules (using Linux iptables or ipvs) to route traffic correctly to Pods behind a Service.
+
+Service Abstraction: 
+- Kube-proxy provides a stable IP address and DNS name for a group of Pods, known as a Service. This allows applications to access a Service without needing to know the individual IP addresses of the underlying Pods, which can change dynamically.
+How Service Groups Pods?-> A Service selects Pods using Labels and Selectors.
+Load Balancing: 
+- When a request is made to a Service, kube-proxy acts as a load balancer, distributing the traffic across the healthy Pods associated with that Service. This ensures high availability and even distribution of requests.
+
+Container Runtime:- A container runtime is the low-level software responsible for:
+
+Starting and stopping containers. Managing container namespaces and cgroups (for isolation). Setting up container filesystems. Running the actual container processes.
+
+Kubernetes object:- A Kubernetes Object is a persistent entity in the Kubernetes system. It represents desired state. A Kubernetes Object is a configuration declaration (YAML/JSON) that tells Kubernetes what to create, manage, and maintain inside the cluster.
+
+Type	                 Description	                                        Use Case
+ClusterIP (default)	Exposes Pods only inside the cluster with a stable IP.	Internal communication between services.
+NodePort	   Exposes Service on a port on every Node (e.g., NodeIP:30080).	Access from outside the cluster (for dev/testing).
+LoadBalancer	 Creates external Load Balancer (cloud).	            Access apps from the Internet (in production).
+
+
+
+Why Deployment exists:
+
+A Deployment is a higher-level abstraction over ReplicaSet.
+
+Main advantages over ReplicaSet:
+
+Declarative Updates (Rolling Updates):
+- You can update your application version gradually without downtime.
+Example: Update from nginx:1.22 → nginx:1.24 and pods are updated one by one.
+
+Rollbacks:
+- If the new version has issues, Deployment can rollback to a previous ReplicaSet automatically.
+
+Versioning & History:
+- Deployment keeps track of previous ReplicaSets for rollback.
+
+Scaling:
+- Deployment manages the ReplicaSet scaling automatically.
+
+Self-Healing:
+- Like ReplicaSet, it ensures the desired number of pods are running, but with updates and rollbacks included.
+
+How they relate:
+- Deployment → manages ReplicaSet → manages Pods
+- You almost never create a ReplicaSet manually in production; you let Deployment handle it.
