@@ -1,1 +1,43 @@
+kubectl get <resource>: Lists one or more resources.
+- kubectl get pods: Lists all pods in the current namespace.
+- kubectl get deployments: Lists all deployments.
+- kubectl get services: Lists all services.
+- kubectl get nodes: Lists all nodes in the cluster.
+- kubectl get all: Lists common resources (deployments, services, pods, etc.).
+Use -n <namespace> to specify a namespace, and -o wide, -o yaml, or -o json for different output formats.
 
+kubectl describe <resource> <resource_name>: Shows detailed information about a specific resource.
+- kubectl describe pod my-pod-name
+- kubectl describe node my-node-name
+- kubectl logs <pod_name>: Displays logs for a container in a pod.
+Use -c <container_name> to specify a container within a multi-container pod.
+
+Use -f to follow logs in real-time.
+Creating and Updating Resources:
+- kubectl apply -f <filename.yaml>: Creates or updates resources defined in a YAML file.
+- kubectl create -f <filename.yaml>: Creates resources from a YAML file.
+
+- kubectl edit <resource> <resource_name>: Opens the definition of a resource in your default editor for modification.
+
+Managing Pods and Containers:
+- kubectl exec -it <pod_name> -- <command>: Executes a command inside a running container within a pod, often used to get an interactive shell.
+- kubectl exec -it my-pod-name -- /bin/bash
+
+kubectl cp <source> <destination>: Copies files and directories to and from containers.
+kubectl port-forward <pod_name> <local_port>:<container_port>: Forwards a local port to a port on a pod.
+
+Scaling and Rollouts:
+- kubectl scale --replicas=<count> deployment/<deployment_name>: Scales a deployment to a specified number of replicas(vertical scaling).
+- kubectl autoscale deployment my-deployment --cpu-percent=50 --min=1 --max=10 (Horizontal scaling)
+- kubectl rollout status deployment/<deployment_name>: Checks the status of a deployment rollout.
+
+Deleting Resources:
+- kubectl delete -f <filename.yaml>: Deletes resources defined in a YAML file.
+- kubectl delete <resource> <resource_name>: Deletes a specific resource.
+- kubectl delete pod my-pod-name
+- kubectl delete service my-service-name
+
+Cluster Management:
+- kubectl cluster-info: Displays information about the cluster.
+- kubectl config view: Shows the kubeconfig configuration.
+- kubectl top node / kubectl top pod: Displays resource usage (CPU/Memory) for nodes or pods (requires Metrics Server).
