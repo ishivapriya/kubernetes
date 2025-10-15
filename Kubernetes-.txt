@@ -68,6 +68,20 @@ Container Runtime:- A container runtime is the low-level software responsible fo
 
 Starting and stopping containers. Managing container namespaces and cgroups (for isolation). Setting up container filesystems. Running the actual container processes.
 
+Pod:-
+A Pod is the smallest deployable unit in Kubernetes. It represents one or more containers that share the same network namespace, storage, and specifications for how to run the containers.
+- Pods are ephemeral: they can die and be replaced.
+- Each Pod gets its own IP address inside the cluster.
+- Containers inside a Pod can communicate with each other via localhost because they share the same network namespace.
+- Pods can share volumes, which allows containers to share persistent data.
+Components of a Pod:-
+- Containers – The application processes. Usually Docker containers.
+- Volumes – Shared storage inside the Pod.
+- Network – Each Pod gets an IP; containers inside communicate internally.
+- Metadata – Name, labels, annotations.
+
+Spec – Instructions on how to run the container (image, ports, resources, etc.).
+
 Kubernetes object:- A Kubernetes Object is a persistent entity in the Kubernetes system. It represents desired state. A Kubernetes Object is a configuration declaration (YAML/JSON) that tells Kubernetes what to create, manage, and maintain inside the cluster.
 
 Type	                 Description	                                        Use Case
@@ -101,4 +115,5 @@ Self-Healing:
 
 How they relate:
 - Deployment → manages ReplicaSet → manages Pods
+
 - You almost never create a ReplicaSet manually in production; you let Deployment handle it.
