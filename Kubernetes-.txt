@@ -117,3 +117,43 @@ How they relate:
 - Deployment → manages ReplicaSet → manages Pods
 
 - You almost never create a ReplicaSet manually in production; you let Deployment handle it.
+
+Namespace:-
+
+- Namespaces provide a mechanism for isolating groups of resources within a single cluster. 
+- They act as virtual clusters within the main cluster, allowing for better organization, resource management, and access control.
+- Namespaces are particularly useful in environments with many users spread across multiple teams or projects.
+
+COMMANDS:-
+
+ kubectl create namespace my-namespace // creating namespace
+ kubectl get namespaces // list namespaces 
+ kubectl get pods --namespace=my-namespace // get pods in this namespace
+ kubectl config set-context --current --namespace=my-namespace // set default namespace for current context
+ kubectl delete namespace my-namespace // deleting a namespaces
+
+Horizontal Pod Autoscaling:-
+- Horizontal Pod Autoscaler (HPA) automatically scales the number of pods based on observed metrics such as CPU utilization. To configure HPA, you need to create a HorizontalPodAutoscaler resource. For example:
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+ name: nginx-hpa
+ namespace: scaling-demo
+spec:
+ scaleTargetRef:
+   apiVersion: apps/v1
+   kind: Deployment
+   name: nginx
+ minReplicas: 1
+ maxReplicas: 5
+ metrics:
+ - type: Resource
+   resource:
+     name: cpu
+     target:
+       type: Utilization
+       averageUtilization: 50
+OR 
+kubectl autoscale deployment <deployment-name> --cpu-percent=50 --min=1 --max=10 //using imperative approach to hpa an deployment
+kubectl get hpa
