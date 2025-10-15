@@ -1,0 +1,63 @@
+Quality of service:
+
+Best effort : pod has no request or limit set. lowest priority pod and no minimal resource guarantee. will be killed first when node run out of resources like memory
+
+Burstable: pod has request or limit set. Limits are higher than request. Minimum resource guarantee. can consume upto limits
+.will be killed if no best efforts pods remain and node run out of resources
+
+Guaranteed: pod has request or limit set. but request and limits are equal. highest priority pods. guaranteed not to be killed before all best efforts and burstable pods.
+
+for guaranteed u have specify cpu and ram both in requests and limits and both should be same
+
+##### kubectl exec -it pod_name -- /bin/bash
+
+High availability for pod
+
+yaml file is called manifest file
+
+Horizontal pod auto scaling(HPA)
+
+##### kubectl scale replicaset [rs-name] --replicas=[no of replicas u want]
+
+##### kubectl autoscale rs [rs-name] --min=[min pods number] --max=[max pods number] --cpu-percent=[percent u want]
+
+
+replicaset is not used for production because it does not have ip address and if it fails then all pods will fail
+
+we use deployment in production instead of replicaset because deployment creates replicaset and replicaset creates pod it will happend auto and scale up and scale down also happens
+
+we write manifes file that of yaml for deployment always.
+
+#################
+kubectl autoscale deploy [deployment-name] --min=5 --max=10 --cpu-percent=50 // we can autoscale deployment
+
+##################
+kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.16.1 //updating new nginx
+
+deployment never deletes replicaset it will lift and shift the old replicaset to new replicatset but old replicaset still present in deployment , to check write describe deployment name
+
+###########
+kubectl edit deploy nginx-deployment
+
+
+kubectl rollout undo deployment/[deployment-name]
+
+kubectl rollout undo deployment/[deployment-name] --to-revision=
+
+Namespaces provide a mechanism for isolating groups of resources within a single cluster. namespace will assign name and ip to a pod like elastic ip in aws. Namespaces are intended for use in environments with many users spread across multiple teams, or projects.
+
+control plane can have pod inside it by declaring explicitly but we wont it is for managing and if it fail then all pods inside it also fail
+
+kubectl get namespace ( we can create using two methods 1)command 2)manifest file like yaml)
+
+kubectl create ns [namespace-name]
+
+we can create pod of same name in different namespace but not in same namespace
+
+kubectl apply -f [file-name] --namespace=[namespace name]
+
+kubectl get pod -n [namespace-name]
+
+
+
+UAT- user acceptance
